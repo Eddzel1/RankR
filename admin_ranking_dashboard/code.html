@@ -1,0 +1,288 @@
+<html class="dark"><head>
+<meta charset="utf-8"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#f42547",
+          "background-light": "#f8f5f6",
+          "background-dark": "#221013",
+        },
+        fontFamily: {
+          "display": ["Plus Jakarta Sans"]
+        },
+        borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+      },
+    },
+  }
+</script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+<div class="relative flex h-screen w-full flex-row overflow-hidden">
+<div class="flex h-full min-w-[280px] flex-col justify-between border-r border-primary/20 bg-background-light dark:bg-background-dark p-4">
+<div class="flex flex-col gap-8">
+<div class="flex gap-3 items-center">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-12" data-alt="Admin profile picture placeholder" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB7sSVx2dFKShjVpiml_Up5GqXoEdWojArBq6P0NcEMj1VM48dpNi0lrDHI_mYCtSBs1XxjAwwVvqym-JreU-KFp-j_9X1Fpm86-k8Ero9lwm2qr0NAJ9HXr-mNxEyQukttdIOwDVlNz9L014u7IpzBSStxeN_uuJcso8Td-WciyTfEsNhCEBAQiFoJjMmHDCOdPcel8Cl15JgETMEWKQ1PuvMIJ9bp4D0Du16Qnz6-8bi6hzOIlEHVVWKdfQVdnzu0SWgCvpDOZSqj");'></div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-normal">Admin Portal</h1>
+<p class="text-primary/70 text-sm font-medium leading-normal">Superadmin</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-[24px]">dashboard</span>
+<p class="text-sm font-bold leading-normal">Overview</p>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/10 text-slate-700 dark:text-slate-300 hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[24px]">group</span>
+<p class="text-sm font-medium leading-normal">Users</p>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/10 text-slate-700 dark:text-slate-300 hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[24px]">bar_chart</span>
+<p class="text-sm font-medium leading-normal">Reports</p>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/10 text-slate-700 dark:text-slate-300 hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/10 text-slate-700 dark:text-slate-300 hover:text-primary transition-colors cursor-pointer mt-auto">
+<span class="material-symbols-outlined text-[24px]">logout</span>
+<p class="text-sm font-medium leading-normal">Logout</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col overflow-y-auto px-8 py-6 gap-8">
+<div class="flex flex-wrap justify-between items-end gap-4">
+<div class="flex flex-col gap-2">
+<p class="text-slate-900 dark:text-slate-100 text-4xl font-black leading-tight tracking-tight">Admin Ranking Dashboard</p>
+<p class="text-slate-500 dark:text-slate-400 text-base font-medium leading-normal">Monitor global ranking and swiping activity.</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-64 placeholder-slate-400 text-slate-900 dark:text-slate-100" placeholder="Search profiles..." type="text"/>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">Export Data</button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="col-span-1 lg:col-span-2 flex flex-col gap-4 rounded-xl border border-primary/20 bg-white dark:bg-[#2a1418] p-6 shadow-sm">
+<div class="flex justify-between items-center">
+<p class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-normal">Swiping Activity Over Time</p>
+<select class="bg-transparent border-none text-sm font-medium text-slate-500 dark:text-slate-400 focus:ring-0 cursor-pointer">
+<option>Last 30 Days</option>
+<option>Last 7 Days</option>
+<option>This Year</option>
+</select>
+</div>
+<div class="flex items-end gap-3">
+<p class="text-slate-900 dark:text-slate-100 text-4xl font-black leading-tight">124,592</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1">Total Swipes</p>
+<span class="material-symbols-outlined text-green-500 text-xl mb-1 ml-2">trending_up</span>
+<p class="text-green-500 text-sm font-bold mb-1">+12.4%</p>
+</div>
+<div class="flex min-h-[220px] flex-1 flex-col gap-6 py-4 relative">
+<svg fill="none" height="180" preserveaspectratio="none" viewbox="-3 0 478 150" width="100%" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25V149H326.769H0V109Z" fill="url(#paint0_linear_1131_5935)"></path>
+<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25" stroke="#f42547" stroke-linecap="round" stroke-width="3"></path>
+<defs>
+<lineargradient gradientunits="userSpaceOnUse" id="paint0_linear_1131_5935" x1="236" x2="236" y1="1" y2="149">
+<stop stop-color="#f42547" stop-opacity="0.3"></stop>
+<stop offset="1" stop-color="#f42547" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+<div class="flex justify-between px-4 absolute bottom-0 w-full left-0">
+<p class="text-slate-400 text-xs font-bold tracking-wider uppercase">Week 1</p>
+<p class="text-slate-400 text-xs font-bold tracking-wider uppercase">Week 2</p>
+<p class="text-slate-400 text-xs font-bold tracking-wider uppercase">Week 3</p>
+<p class="text-slate-400 text-xs font-bold tracking-wider uppercase">Week 4</p>
+</div>
+</div>
+</div>
+<div class="col-span-1 rounded-xl border border-primary/20 bg-white dark:bg-[#2a1418] p-6 shadow-sm flex flex-col gap-6">
+<div class="flex justify-between items-center">
+<p class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-normal">Quick Stats</p>
+<span class="material-symbols-outlined text-slate-400">more_vert</span>
+</div>
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+<div class="p-3 bg-primary/20 rounded-full text-primary">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Matches</p>
+<p class="text-slate-900 dark:text-slate-100 text-xl font-bold">45,231</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+<div class="p-3 bg-blue-500/20 rounded-full text-blue-500">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">New Users (30d)</p>
+<p class="text-slate-900 dark:text-slate-100 text-xl font-bold">8,942</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+<div class="p-3 bg-orange-500/20 rounded-full text-orange-500">
+<span class="material-symbols-outlined">local_fire_department</span>
+</div>
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Active Now</p>
+<p class="text-slate-900 dark:text-slate-100 text-xl font-bold">1,204</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-slate-900 dark:text-slate-100 text-2xl font-black leading-tight tracking-tight">Top 3 Podium</h2>
+<button class="text-primary text-sm font-bold hover:underline">View All Rankings</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="relative flex flex-col items-center gap-4 rounded-xl border border-primary/20 bg-white dark:bg-[#2a1418] p-6 shadow-sm transform translate-y-4">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 border-white dark:border-[#2a1418] z-10">2</div>
+<div class="w-32 bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-slate-200 dark:border-slate-700" data-alt="Profile picture of 2nd place user" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB1PFfuKVonodTvjSHlHtaPHIhsvBbcxlLKVOa2qLwpdLq0xCXY5Xj1Ickr5joC5YD-FhXBFBcGMci-8wGgl4jrOGfmTr3BC6mOp1NLyg_JSkDn913C1e2Ni0kWcqhRGi3jGvQ-ND0N-FFlUmJzonzWu_Nxh70QES4k_Nj7r_J_cGFqeTDkrd2KM5SRMkE-ALY3yZOmx1MHTyA20xlgOHYFAeISX9Etm9xl5MzAG5uWL5NFXbEHBuw2RJt2lP2b3NInFrV3I5Rek5SN");'></div>
+<div class="text-center">
+<p class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-normal">Michael B.</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">94% Win Rate</p>
+<div class="mt-3 inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-[16px] text-primary">swipe</span>
+<span class="text-slate-700 dark:text-slate-300 text-xs font-bold">12.1k</span>
+</div>
+</div>
+</div>
+<div class="relative flex flex-col items-center gap-4 rounded-xl border-2 border-primary bg-primary/5 dark:bg-primary/10 p-8 shadow-md transform -translate-y-2 z-10">
+<div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 w-10 h-10 rounded-full flex items-center justify-center font-black border-2 border-white dark:border-[#2a1418] z-10 shadow-lg">1</div>
+<span class="material-symbols-outlined absolute top-4 right-4 text-yellow-400 text-3xl">trophy</span>
+<div class="w-40 bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-yellow-400" data-alt="Profile picture of 1st place user" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA3DIm1LPWz11UAzBO_RI7rU-fxv4xonXn3Ij9PjgbZYgcy9xa8MJ_2sLENMu-2tfox4x9s0q__4ZsJDey-35nBxjKMYWbvu5XBtXJVgjga3ZP_OGlx_D5P80XTNUGCHH1q14Has7mTRatThi1N-9qimezYi5b80reD9dDxbBFo5btpKLzx-Rw1sY1-BuafCMYhjdSpo7cJPHita_tSOdY1QxC0TTrNoLjG_sXpqfe19Uk-mTop6tTDjtHBWKpTtEdlkdtT7aHcgHYf");'></div>
+<div class="text-center">
+<p class="text-slate-900 dark:text-slate-100 text-xl font-black leading-normal">Jessica T.</p>
+<p class="text-slate-600 dark:text-slate-400 text-base font-bold">98% Win Rate</p>
+<div class="mt-4 inline-flex items-center gap-1 bg-primary px-4 py-1.5 rounded-full text-white">
+<span class="material-symbols-outlined text-[18px]">swipe</span>
+<span class="text-sm font-bold">15.2k</span>
+</div>
+</div>
+</div>
+<div class="relative flex flex-col items-center gap-4 rounded-xl border border-primary/20 bg-white dark:bg-[#2a1418] p-6 shadow-sm transform translate-y-8">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-300 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 border-white dark:border-[#2a1418] z-10">3</div>
+<div class="w-28 bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-orange-300" data-alt="Profile picture of 3rd place user" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDdcNaeJoTwepUaOuGlAYwmVef7pX6EJ2_I0ghOhOdKWH88WUV2pwNOsNnl-ledkEP_NBiuP7dr7Vcs4EyPJIutkXQs8NW56Fym_UWc6QkKxvwkxwPhWmDxvoMVv50ePnyGz0raounJuBr_4aeQmZHZ6XTjNTMrM4pz6cafxPB7dSVvve5reZR7SpV86yu16geoIoflIEeALI8kWS_yQyamYtUKU-JFm7nwnjQJiDEHj6zdcS_Ju3LAl2I38uaNvxeUIw4LBiEfJCFX");'></div>
+<div class="text-center">
+<p class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-normal">Sarah L.</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">91% Win Rate</p>
+<div class="mt-3 inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-[16px] text-primary">swipe</span>
+<span class="text-slate-700 dark:text-slate-300 text-xs font-bold">10.4k</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-black leading-tight tracking-tight mb-4">Detailed Rankings</h2>
+<div class="overflow-x-auto rounded-xl border border-primary/20 bg-white dark:bg-[#2a1418] shadow-sm">
+<table class="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+<thead class="bg-slate-50 dark:bg-slate-800/50 text-xs uppercase text-slate-700 dark:text-slate-300">
+<tr>
+<th class="px-6 py-4 font-bold rounded-tl-xl" scope="col">Rank</th>
+<th class="px-6 py-4 font-bold" scope="col">Profile</th>
+<th class="px-6 py-4 font-bold" scope="col">Win Rate %</th>
+<th class="px-6 py-4 font-bold" scope="col">Total Swipes</th>
+<th class="px-6 py-4 font-bold" scope="col">Matches</th>
+<th class="px-6 py-4 font-bold" scope="col">Last Active</th>
+<th class="px-6 py-4 font-bold rounded-tr-xl text-right" scope="col">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/10">
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-bold text-slate-900 dark:text-slate-100">#4</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-cover bg-center" data-alt="User avatar thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD9xJmAPqgd57vcT9WBeiZGIa9puVDt2a0u9wCMvCE3C12AXkcFlgsKswxfT-KEb6JBhLSnJnxW0TLPYSARhu_eHuq8ZsK9FJYmEsDWizAqfa_27ZGrQS2wMo5eo_aNz9QEumD7ILb_4xhnT_FflB_sPaDc9ONf__1huTVxbQutdM0tZCZdy9XgIv6uIXcvXvwNjsG6F69hgPy1OWSf6ufKu0nEKVfg8pl99uQCHXSVLy9W1R0nPMdNnJ-Xl2cIrVyfScvm1eNHZrPA')"></div>
+<span class="font-bold text-slate-900 dark:text-slate-100">David R.</span>
+</div>
+</td>
+<td class="px-6 py-4 font-medium text-green-500">89.5%</td>
+<td class="px-6 py-4 font-medium">9,842</td>
+<td class="px-6 py-4 font-medium">1,204</td>
+<td class="px-6 py-4">2 hours ago</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-bold text-slate-900 dark:text-slate-100">#5</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-cover bg-center" data-alt="User avatar thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAjBjTGq94Z7CB6-4K2cu2ayVshjXDPQcA4MJGsfbRHv2aMvDD2OHwTuD2EM76gjRhTIKaB7D4rNQKNuYYt96fv5mgGEcs-acUlJ1c3aFgKHuWDct-Nj0fZpT51cvitfR6jJff1z4g6EjPxXzFQUspjfQxyhGuB6L8jOH1dvf1OUkN7E3nbTBhW5fmPZIktkBm0bVKwXSVvafwy8Ck-SXjnNqv_oplAULdcBcb6Wyk8q2_wql2eiANUQzGvVJ2zd_z_WnavKIsGM9xl')"></div>
+<span class="font-bold text-slate-900 dark:text-slate-100">Emma W.</span>
+</div>
+</td>
+<td class="px-6 py-4 font-medium text-green-500">88.2%</td>
+<td class="px-6 py-4 font-medium">9,105</td>
+<td class="px-6 py-4 font-medium">1,150</td>
+<td class="px-6 py-4">5 mins ago</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-bold text-slate-900 dark:text-slate-100">#6</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-cover bg-center" data-alt="User avatar thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCxDmUHKfvL71aChxuHwLebRNs1L-X0YfXhMs6rvtuAQGv10G__NAEDn-RWWBfO2uNCfFPDylrshB5gJj8ekYIoixjhHgw05XYL5anRtUx_8euGyTxCAEAuQY_QGie8-rNvlj3NCkis_tkrU5_LlZvvD1SoCYTbN2KDg3rTCb9bDekibrUoIPzbqTvOTfjw7wyxzuzBQVoG5v4wYjXOIJf4WySRh-Qn7U9PzhU95ELdEQcJWdDQdS2tNvDFfCxgjoCX7MqrkNdlfJw8')"></div>
+<span class="font-bold text-slate-900 dark:text-slate-100">James C.</span>
+</div>
+</td>
+<td class="px-6 py-4 font-medium text-green-500">86.7%</td>
+<td class="px-6 py-4 font-medium">8,733</td>
+<td class="px-6 py-4 font-medium">980</td>
+<td class="px-6 py-4">1 day ago</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-4 font-bold text-slate-900 dark:text-slate-100">#7</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-cover bg-center" data-alt="User avatar thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBkphi5aYjFufNqYR1DYwBA1DQE8gULsSBF5WM4XkYNT0yle7h4J4s3dNWnZpJ2wbLO498dE0ADOJiVOMlrvhKMri1eNz5nYEPwOAoR1fV5kJcdFsJ5vaMGymTeQGLStf07-LoWab3A9QWgAap_FLH5ZambgJMIDOpMczuPUvHwHYbYRDDmn7vcU7z4T_hXQUQ4jbnGzSbS4DH_HpJA8NNab28VT1tmtFC357Y-ttEfhBxyVTn7mm1JFnD5F5BvzC23xjUMYi34Gcra')"></div>
+<span class="font-bold text-slate-900 dark:text-slate-100">Olivia M.</span>
+</div>
+</td>
+<td class="px-6 py-4 font-medium text-green-500">85.9%</td>
+<td class="px-6 py-4 font-medium">8,210</td>
+<td class="px-6 py-4 font-medium">912</td>
+<td class="px-6 py-4">10 mins ago</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-6 py-4 border-t border-primary/10 flex justify-between items-center rounded-b-xl bg-slate-50 dark:bg-slate-800/50">
+<span class="text-sm text-slate-500 dark:text-slate-400">Showing 4 to 7 of 15,243 entries</span>
+<div class="flex gap-2">
+<button class="px-3 py-1 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm hover:bg-slate-50 dark:hover:bg-slate-600">Prev</button>
+<button class="px-3 py-1 rounded bg-primary text-white text-sm font-medium">1</button>
+<button class="px-3 py-1 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm hover:bg-slate-50 dark:hover:bg-slate-600">2</button>
+<button class="px-3 py-1 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm hover:bg-slate-50 dark:hover:bg-slate-600">3</button>
+<span class="px-2 py-1 text-slate-500">...</span>
+<button class="px-3 py-1 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm hover:bg-slate-50 dark:hover:bg-slate-600">Next</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

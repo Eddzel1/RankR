@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>RankR - Student Comparison & Ranking</title>
+  <meta name="description" content="Rate, compare, and rank students in a fun and interactive way." />
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#f42547",
+            "background-light": "#f8f5f6",
+            "background-dark": "#221013",
+          },
+          fontFamily: {
+            "display": ["Plus Jakarta Sans", "sans-serif"]
+          },
+          borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(244, 37, 71, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 40px rgba(244, 37, 71, 0.6);
+      }
+    }
+
+    .pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-8px);
+      border-color: #f42547;
+    }
+
+    .view {
+      transition: opacity 0.3s ease;
+    }
+
+    /* Mobile-first responsive helpers */
+    @media (max-width: 767px) {
+      .desktop-sidebar {
+        display: none !important;
+      }
+
+      .mobile-bottom-nav {
+        display: flex !important;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .mobile-bottom-nav {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body
+  class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col overflow-x-hidden">
+
+  <!-- ═══════════════════════════════════════════
+     LOGIN VIEW
+     ═══════════════════════════════════════════ -->
+  <div id="login-view" class="view hidden min-h-screen flex flex-col">
+    <header
+      class="flex items-center justify-between whitespace-nowrap border-b border-primary/10 px-4 sm:px-10 py-3 sm:py-4 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md fixed top-0 z-50">
+      <div class="flex items-center gap-4 text-primary">
+        <div class="size-6">
+          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor"
+              fill-rule="evenodd"></path>
+          </svg>
+        </div>
+        <h2 class="text-xl font-bold leading-tight tracking-tight">RankR</h2>
+      </div>
+    </header>
+
+    <main
+      class="flex-1 flex items-center justify-center pt-20 sm:pt-24 pb-8 sm:pb-12 px-3 sm:px-4 w-full max-w-7xl mx-auto">
+      <div
+        class="w-full max-w-5xl flex flex-col md:flex-row bg-white dark:bg-background-dark border border-primary/10 rounded-xl overflow-hidden shadow-2xl fade-in-up">
+        <!-- Left: Form -->
+        <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+          <div class="max-w-md w-full mx-auto">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">Welcome Back</h1>
+            <p class="text-slate-500 dark:text-slate-400 mb-8">Sign in to continue ranking and discover your top picks.
+            </p>
+
+            <!-- Error message -->
+            <div id="login-error"
+              class="hidden mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm font-medium">
+            </div>
+
+            <form id="login-form" class="flex flex-col gap-5">
+              <label class="flex flex-col w-full">
+                <span class="text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-300">Email Address</span>
+                <div
+                  class="relative flex items-center h-12 rounded-lg bg-slate-50 dark:bg-primary/5 border border-slate-200 dark:border-primary/20 focus-within:border-primary dark:focus-within:border-primary transition-colors overflow-hidden">
+                  <span
+                    class="material-symbols-outlined absolute left-3 text-slate-400 dark:text-primary/60">mail</span>
+                  <input id="login-email"
+                    class="w-full h-full bg-transparent border-none focus:ring-0 pl-10 pr-4 text-sm outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 text-slate-900 dark:text-slate-100"
+                    placeholder="Enter your email" required type="email" />
+                </div>
+              </label>
+              <label class="flex flex-col w-full">
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Password</span>
+                </div>
+                <div
+                  class="relative flex items-center h-12 rounded-lg bg-slate-50 dark:bg-primary/5 border border-slate-200 dark:border-primary/20 focus-within:border-primary dark:focus-within:border-primary transition-colors overflow-hidden">
+                  <span
+                    class="material-symbols-outlined absolute left-3 text-slate-400 dark:text-primary/60">lock</span>
+                  <input id="login-password"
+                    class="w-full h-full bg-transparent border-none focus:ring-0 pl-10 pr-10 text-sm outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 text-slate-900 dark:text-slate-100"
+                    placeholder="Enter your password" required type="password" />
+                  <button onclick="togglePasswordVisibility()"
+                    class="absolute right-3 text-slate-400 dark:text-primary/60 hover:text-slate-600 dark:hover:text-primary transition-colors flex items-center justify-center"
+                    type="button">
+                    <span id="password-toggle-icon" class="material-symbols-outlined text-xl">visibility</span>
+                  </button>
+                </div>
+              </label>
+              <button id="login-submit"
+                class="h-12 w-full mt-2 bg-primary hover:bg-primary/90 text-white font-bold rounded-full transition-colors flex items-center justify-center gap-2"
+                type="submit">
+                <span>Login</span>
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right: Hero -->
+        <div class="hidden md:block w-1/2 relative bg-primary/10 overflow-hidden min-h-[500px]">
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-primary/80 to-purple-600/80 mix-blend-multiply dark:mix-blend-color z-10">
+          </div>
+          <div class="absolute inset-0 bg-center bg-cover bg-no-repeat"
+            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCo38wFchBII_EsLsQQg7P8waffV_0z9YsT4dQnnRjJ2vk0t1bZ1-1eJNXwAe2eOAddYUd77s06kS1bj-LJHryFmw6hFqpzhhR3wJTPGdgYHl6DvCLchELlIoB7jmiKGzmEsAiBpMgKwf0fncluQwpVq5p8Lrllj3qB2Ubdhd7JfLiNc_7J6GdTnIa_ZY6_aFDUN6Pt6pHrpM7HYinv_vnEpTgVSbz090wN8UrN6w6sHWrj0Ew_zce90zzmPRlfMqFvZXmEXOi5wf4A');">
+          </div>
+          <div
+            class="absolute inset-0 z-20 flex flex-col items-center justify-center p-12 text-center text-white bg-black/30 backdrop-blur-[2px]">
+            <div
+              class="w-20 h-20 mb-6 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white pulse-glow">
+              <span class="material-symbols-outlined text-4xl">favorite</span>
+            </div>
+            <h2 class="text-4xl font-black mb-4 tracking-tight leading-tight">Discover, rate,<br />and rank.</h2>
+            <p class="text-lg text-white/90 max-w-sm">Join the most exciting student ranking community today.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+     COMPARE VIEW
+     ═══════════════════════════════════════════ -->
+  <div id="compare-view" class="view hidden min-h-screen flex flex-col">
+    <header
+      class="flex items-center justify-between whitespace-nowrap border-b border-primary/20 px-4 sm:px-10 py-3 sm:py-4">
+      <div class="flex items-center gap-3 sm:gap-4 text-primary">
+        <div class="size-5 sm:size-6">
+          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor"
+              fill-rule="evenodd"></path>
+          </svg>
+        </div>
+        <h2 class="text-lg sm:text-xl font-bold tracking-tight">RankR</h2>
+      </div>
+      <!-- Desktop nav -->
+      <nav class="hidden md:flex flex-1 justify-end gap-8 items-center">
+        <a class="text-sm font-medium hover:text-primary transition-colors cursor-pointer"
+          onclick="window.location.hash='#compare'">Match</a>
+        <a class="text-sm font-medium hover:text-primary transition-colors cursor-pointer"
+          onclick="window.location.hash='#dashboard'">Rankings</a>
+        <a class="text-sm font-medium hover:text-primary transition-colors cursor-pointer" onclick="logout()">Logout</a>
+      </nav>
+      <!-- Mobile nav -->
+      <nav class="flex md:hidden gap-4 items-center">
+        <a class="text-primary" onclick="window.location.hash='#dashboard'"><span
+            class="material-symbols-outlined text-[22px]">leaderboard</span></a>
+        <a class="text-slate-400 hover:text-primary" onclick="logout()"><span
+            class="material-symbols-outlined text-[22px]">logout</span></a>
+      </nav>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-center p-2 sm:p-4 md:p-8 w-full max-w-7xl mx-auto">
+      <div class="text-center mb-4 sm:mb-8 fade-in-up">
+        <h1 class="text-2xl sm:text-3xl md:text-5xl font-black mb-1 sm:mb-2 text-slate-900 dark:text-white">Who is more
+          your type?</h1>
+        <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm md:text-base">Tap a photo to choose. Your vote
+          counts!
+        </p>
+      </div>
+
+      <!-- Loading spinner -->
+      <div id="compare-loading" class="hidden flex items-center justify-center py-20">
+        <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+      </div>
+
+      <div id="compare-cards"
+        class="flex flex-row items-center justify-center gap-2 sm:gap-6 md:gap-12 w-full transition-all duration-300 px-1 sm:px-0">
+        <!-- Student 1 -->
+        <div id="student-1"
+          class="relative group cursor-pointer w-full max-w-[45%] sm:max-w-sm aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden shadow-xl card-hover border-2 sm:border-4 border-transparent">
+          <div class="student-photo absolute inset-0 bg-cover bg-center" style="background-color: #3f1219"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-6 text-white">
+            <h3 class="student-name text-sm sm:text-lg md:text-2xl font-bold leading-tight">Loading...</h3>
+            <p class="student-bio text-[10px] sm:text-sm text-slate-200 mt-1 sm:mt-2 line-clamp-1 sm:line-clamp-2"></p>
+            <a class="student-fb hidden mt-1 sm:mt-3 inline-flex items-center gap-1 text-[10px] sm:text-xs text-blue-300 hover:text-blue-200 transition-colors"
+              href="#" target="_blank">
+              <span class="material-symbols-outlined text-[10px] sm:text-sm">link</span> Facebook
+            </a>
+          </div>
+        </div>
+
+        <!-- VS badge -->
+        <div
+          class="flex items-center justify-center w-8 h-8 sm:w-16 sm:h-16 rounded-full bg-primary/10 dark:bg-primary/20 border sm:border-2 border-primary text-primary font-black text-xs sm:text-xl shrink-0 z-10 shadow-lg pulse-glow">
+          VS
+        </div>
+
+        <!-- Student 2 -->
+        <div id="student-2"
+          class="relative group cursor-pointer w-full max-w-[45%] sm:max-w-sm aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden shadow-xl card-hover border-2 sm:border-4 border-transparent">
+          <div class="student-photo absolute inset-0 bg-cover bg-center" style="background-color: #3f1219"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-6 text-white">
+            <h3 class="student-name text-sm sm:text-lg md:text-2xl font-bold leading-tight">Loading...</h3>
+            <p class="student-bio text-[10px] sm:text-sm text-slate-200 mt-1 sm:mt-2 line-clamp-1 sm:line-clamp-2"></p>
+            <a class="student-fb hidden mt-1 sm:mt-3 inline-flex items-center gap-1 text-[10px] sm:text-xs text-blue-300 hover:text-blue-200 transition-colors"
+              href="#" target="_blank">
+              <span class="material-symbols-outlined text-[10px] sm:text-sm">link</span> Facebook
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 sm:mt-10 flex flex-wrap justify-center gap-4 w-full max-w-md px-4">
+        <button id="skip-btn"
+          class="flex-1 py-2.5 sm:py-3 px-6 rounded-full bg-primary text-white font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-md flex items-center justify-center gap-2 text-sm sm:text-base">
+          <span class="material-symbols-outlined text-lg sm:text-xl">skip_next</span> Skip
+        </button>
+      </div>
+
+      <div id="rankings-link"
+        class="mt-8 sm:mt-16 w-full max-w-2xl bg-white dark:bg-slate-800/50 rounded-xl p-4 sm:p-6 border border-primary/20 shadow-sm flex items-center justify-between cursor-pointer hover:border-primary/50 transition-colors mx-3 sm:mx-0">
+        <div>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">Curious who's winning?</p>
+          <h4 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white mt-1">Global Rankings</h4>
+        </div>
+        <div class="bg-primary/10 text-primary p-2 sm:p-3 rounded-full flex items-center justify-center">
+          <span class="material-symbols-outlined text-xl sm:text-2xl">trending_up</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+     DASHBOARD VIEW
+     ═══════════════════════════════════════════ -->
+  <div id="dashboard-view" class="view hidden min-h-screen">
+    <div class="relative flex h-screen w-full flex-col md:flex-row overflow-hidden">
+      <!-- Desktop Sidebar -->
+      <div
+        class="desktop-sidebar hidden md:flex h-full min-w-[280px] flex-col justify-between border-r border-primary/20 bg-background-light dark:bg-background-dark p-4">
+        <div class="flex flex-col gap-8">
+          <div class="flex gap-3 items-center">
+            <div class="bg-primary/20 rounded-full size-12 flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-2xl">person</span>
+            </div>
+            <div class="flex flex-col">
+              <h1 id="admin-email"
+                class="text-slate-900 dark:text-slate-100 text-sm font-bold leading-normal truncate max-w-[180px]">Admin
+              </h1>
+              <p id="admin-role" class="text-primary/70 text-sm font-medium leading-normal capitalize">admin</p>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div id="nav-overview"
+              class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/20 text-primary cursor-pointer">
+              <span class="material-symbols-outlined text-[24px]">dashboard</span>
+              <p class="text-sm font-bold leading-normal">Overview</p>
+            </div>
+            <div id="nav-match"
+              class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/10 text-slate-700 dark:text-slate-300 hover:text-primary transition-colors cursor-pointer">
+              <span class="material-symbols-outlined text-[24px]">favorite</span>
+              <p class="text-sm font-medium leading-normal">Match</p>
+            </div>
+          </div>
+        </div>
+        <div id="nav-logout"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/10 text-slate-700 dark:text-slate-300 hover:text-primary transition-colors cursor-pointer mt-auto">
+          <span class="material-symbols-outlined text-[24px]">logout</span>
+          <p class="text-sm font-medium leading-normal">Logout</p>
+        </div>
+      </div>
+
+      <!-- Mobile Top Bar (shown only on mobile) -->
+      <div
+        class="flex md:hidden items-center justify-between px-4 py-3 border-b border-primary/20 bg-background-light dark:bg-background-dark shrink-0">
+        <div class="flex items-center gap-3 text-primary">
+          <div class="size-5">
+            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor"
+                fill-rule="evenodd"></path>
+            </svg>
+          </div>
+          <h2 class="text-lg font-bold tracking-tight">Dashboard</h2>
+        </div>
+        <div class="flex items-center gap-1 text-sm">
+          <span id="admin-email-mobile" class="text-slate-400 text-xs font-medium truncate max-w-[120px]">Admin</span>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div class="flex-1 flex flex-col overflow-y-auto px-4 sm:px-8 py-4 sm:py-6 gap-4 sm:gap-8 pb-20 md:pb-6">
+        <!-- Loading -->
+        <div id="dash-loading" class="hidden fixed inset-0 z-50 bg-background-dark/80 flex items-center justify-center">
+          <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+        </div>
+
+        <!-- Header -->
+        <div class="flex flex-wrap justify-between items-end gap-4 fade-in-up">
+          <div class="flex flex-col gap-2">
+            <p class="text-slate-900 dark:text-slate-100 text-4xl font-black leading-tight tracking-tight">Rankings
+              Dashboard</p>
+            <p class="text-slate-500 dark:text-slate-400 text-base font-medium leading-normal">Monitor global ranking
+              and voting activity.</p>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            class="flex items-center gap-4 p-5 rounded-xl bg-white dark:bg-[#2a1418] border border-primary/20 shadow-sm">
+            <div class="p-3 bg-primary/20 rounded-full text-primary">
+              <span class="material-symbols-outlined">favorite</span>
+            </div>
+            <div>
+              <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Comparisons</p>
+              <p id="stat-total-comparisons" class="text-slate-900 dark:text-slate-100 text-xl font-bold">0</p>
+            </div>
+          </div>
+          <div
+            class="flex items-center gap-4 p-5 rounded-xl bg-white dark:bg-[#2a1418] border border-primary/20 shadow-sm">
+            <div class="p-3 bg-blue-500/20 rounded-full text-blue-500">
+              <span class="material-symbols-outlined">group</span>
+            </div>
+            <div>
+              <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Students</p>
+              <p id="stat-total-students" class="text-slate-900 dark:text-slate-100 text-xl font-bold">0</p>
+            </div>
+          </div>
+          <div
+            class="flex items-center gap-4 p-5 rounded-xl bg-white dark:bg-[#2a1418] border border-primary/20 shadow-sm">
+            <div class="p-3 bg-orange-500/20 rounded-full text-orange-500">
+              <span class="material-symbols-outlined">local_fire_department</span>
+            </div>
+            <div>
+              <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Go Compare</p>
+              <a onclick="window.location.hash='#compare'"
+                class="text-primary text-sm font-bold cursor-pointer hover:underline">Start Voting →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top 3 Podium -->
+        <div>
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-slate-900 dark:text-slate-100 text-2xl font-black leading-tight tracking-tight">Top 3 Podium
+            </h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- 2nd place -->
+            <div id="podium-1"
+              class="relative flex flex-col items-center gap-4 rounded-xl border border-primary/20 bg-white dark:bg-[#2a1418] p-6 shadow-sm transform translate-y-4">
+              <div
+                class="absolute -top-4 left-1/2 -translate-x-1/2 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 border-white dark:border-[#2a1418] z-10">
+                2</div>
+              <div
+                class="podium-photo w-32 bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-slate-200 dark:border-slate-700"
+                style="background-color: #3f1219;"></div>
+              <div class="text-center">
+                <p class="podium-name text-slate-900 dark:text-slate-100 text-lg font-bold leading-normal">No data</p>
+                <p class="podium-winrate text-slate-500 dark:text-slate-400 text-sm font-medium">-</p>
+                <div class="mt-3 inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+                  <span class="material-symbols-outlined text-[16px] text-primary">swipe</span>
+                  <span class="podium-total text-slate-700 dark:text-slate-300 text-xs font-bold">0</span>
+                </div>
+              </div>
+            </div>
+            <!-- 1st place -->
+            <div id="podium-2"
+              class="relative flex flex-col items-center gap-4 rounded-xl border-2 border-primary bg-primary/5 dark:bg-primary/10 p-8 shadow-md transform -translate-y-2 z-10">
+              <div
+                class="absolute -top-5 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 w-10 h-10 rounded-full flex items-center justify-center font-black border-2 border-white dark:border-[#2a1418] z-10 shadow-lg">
+                1</div>
+              <span class="material-symbols-outlined absolute top-4 right-4 text-yellow-400 text-3xl">trophy</span>
+              <div
+                class="podium-photo w-40 bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-yellow-400"
+                style="background-color: #3f1219;"></div>
+              <div class="text-center">
+                <p class="podium-name text-slate-900 dark:text-slate-100 text-xl font-black leading-normal">No data</p>
+                <p class="podium-winrate text-slate-600 dark:text-slate-400 text-base font-bold">-</p>
+                <div class="mt-4 inline-flex items-center gap-1 bg-primary px-4 py-1.5 rounded-full text-white">
+                  <span class="material-symbols-outlined text-[18px]">swipe</span>
+                  <span class="podium-total text-sm font-bold">0</span>
+                </div>
+              </div>
+            </div>
+            <!-- 3rd place -->
+            <div id="podium-3"
+              class="relative flex flex-col items-center gap-4 rounded-xl border border-primary/20 bg-white dark:bg-[#2a1418] p-6 shadow-sm transform translate-y-8">
+              <div
+                class="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-300 text-orange-900 w-8 h-8 rounded-full flex items-center justify-center font-bold border-2 border-white dark:border-[#2a1418] z-10">
+                3</div>
+              <div
+                class="podium-photo w-28 bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-orange-300"
+                style="background-color: #3f1219;"></div>
+              <div class="text-center">
+                <p class="podium-name text-slate-900 dark:text-slate-100 text-lg font-bold leading-normal">No data</p>
+                <p class="podium-winrate text-slate-500 dark:text-slate-400 text-sm font-medium">-</p>
+                <div class="mt-3 inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+                  <span class="material-symbols-outlined text-[16px] text-primary">swipe</span>
+                  <span class="podium-total text-slate-700 dark:text-slate-300 text-xs font-bold">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rankings Table -->
+        <div class="mt-4">
+          <h2 class="text-slate-900 dark:text-slate-100 text-xl font-black leading-tight tracking-tight mb-4">Detailed
+            Rankings</h2>
+          <div class="overflow-x-auto rounded-xl border border-primary/20 bg-white dark:bg-[#2a1418] shadow-sm">
+            <table class="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+              <thead class="bg-slate-50 dark:bg-slate-800/50 text-xs uppercase text-slate-700 dark:text-slate-300">
+                <tr>
+                  <th class="px-6 py-4 font-bold rounded-tl-xl" scope="col">Rank</th>
+                  <th class="px-6 py-4 font-bold" scope="col">Profile</th>
+                  <th class="px-6 py-4 font-bold" scope="col">Win Rate %</th>
+                  <th class="px-6 py-4 font-bold" scope="col">Total Votes</th>
+                  <th class="px-6 py-4 font-bold" scope="col">Wins</th>
+                  <th class="px-6 py-4 font-bold rounded-tr-xl" scope="col">FB Profile</th>
+                </tr>
+              </thead>
+              <tbody id="rankings-tbody" class="divide-y divide-primary/10">
+                <tr>
+                  <td colspan="6" class="px-6 py-8 text-center text-slate-400">Loading rankings...</td>
+                </tr>
+              </tbody>
+            </table>
+            <div
+              class="px-6 py-4 border-t border-primary/10 flex justify-between items-center rounded-b-xl bg-slate-50 dark:bg-slate-800/50">
+              <span id="rankings-count" class="text-sm text-slate-500 dark:text-slate-400">Loading...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spacer -->
+        <div class="h-8"></div>
+      </div>
+    </div>
+
+    <!-- Mobile Bottom Nav -->
+    <div
+      class="mobile-bottom-nav hidden fixed bottom-0 left-0 right-0 bg-background-light dark:bg-background-dark border-t border-primary/20 z-50 justify-around items-center py-2 px-4">
+      <button onclick="window.location.hash='#dashboard'" class="flex flex-col items-center gap-0.5 text-primary">
+        <span class="material-symbols-outlined text-[22px]">dashboard</span>
+        <span class="text-[10px] font-bold">Overview</span>
+      </button>
+      <button onclick="window.location.hash='#compare'"
+        class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-primary">
+        <span class="material-symbols-outlined text-[22px]">favorite</span>
+        <span class="text-[10px] font-medium">Match</span>
+      </button>
+      <button onclick="logout()" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-primary">
+        <span class="material-symbols-outlined text-[22px]">logout</span>
+        <span class="text-[10px] font-medium">Logout</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- All app code in one inline script to avoid scope issues -->
+  <script>
+    // ═══════════════════════════════════════════
+    // SUPABASE CONFIG
+    // ═══════════════════════════════════════════
+    const SUPABASE_URL = 'https://jqgxzlvhmcwomkdeiryt.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZ3h6bHZobWN3b21rZGVpcnl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxNDI5MTQsImV4cCI6MjA3MDcxODkxNH0.DTTDgG6Y9EXx6gXcxitRLUzLWR3-0Y6nndosiWd8xc0';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ═══════════════════════════════════════════
+    // AUTH MODULE
+    // ═══════════════════════════════════════════
+    async function loginWithEmail(email, password) {
+      const { data, error } = await db.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+
+      const { data: adminUser, error: adminError } = await db
+        .from('admin_users')
+        .select('*')
+        .eq('user_id', data.user.id)
+        .eq('is_active', true)
+        .single();
+
+      if (adminError || !adminUser) {
+        await db.auth.signOut();
+        throw new Error('Access denied. Your account is not authorized or has been deactivated.');
+      }
+
+      return { user: data.user, adminUser };
+    }
+
+    async function logout() {
+      await db.auth.signOut();
+      window.location.hash = '#login';
+    }
+
+    async function getCurrentUser() {
+      const { data: { session } } = await db.auth.getSession();
+      if (!session) return null;
+
+      const { data: adminUser } = await db
+        .from('admin_users')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .eq('is_active', true)
+        .single();
+
+      return adminUser ? { user: session.user, adminUser } : null;
+    }
+
+    async function requireAuth() {
+      const currentUser = await getCurrentUser();
+      if (!currentUser) {
+        window.location.hash = '#login';
+        return null;
+      }
+      return currentUser;
+    }
+
+    // ═══════════════════════════════════════════
+    // STUDENTS MODULE
+    // ═══════════════════════════════════════════
+    let _studentIds = null;
+
+    async function getAllStudentIds() {
+      if (_studentIds) return _studentIds;
+      const { data, error } = await db.from('students').select('id');
+      if (error) throw error;
+      _studentIds = data.map(s => s.id);
+      return _studentIds;
+    }
+
+    async function getTwoRandomStudents() {
+      const ids = await getAllStudentIds();
+      if (ids.length < 2) throw new Error('Not enough students in the database');
+
+      const i = Math.floor(Math.random() * ids.length);
+      let j = Math.floor(Math.random() * (ids.length - 1));
+      if (j >= i) j++;
+
+      const { data, error } = await db.from('students').select('*').in('id', [ids[i], ids[j]]);
+      if (error) throw error;
+
+      for (const student of data) {
+        student._photoUrl = await getStudentPhotoUrl(student);
+        student._age = getStudentAge(student.birthday);
+        student._fullName = formatStudentName(student);
+      }
+      return data;
+    }
+
+    async function getStudentPhotoUrl(student) {
+      if (student.profile_picture_url) {
+        if (student.profile_picture_url.startsWith('http')) return student.profile_picture_url;
+        return `${SUPABASE_URL}/storage/v1/object/public/${student.profile_picture_url}`;
+      }
+      try {
+        const { data: files } = await db.storage.from('student-documents').list(student.id, { search: 'profile-picture' });
+        if (files && files.length > 0) {
+          const pic = files.find(f => f.name.startsWith('profile-picture'));
+          if (pic) return `${SUPABASE_URL}/storage/v1/object/public/student-documents/${student.id}/${pic.name}`;
+        }
+      } catch (e) { console.warn('Photo fetch error:', e); }
+      return null;
+    }
+
+    function getStudentAge(birthday) {
+      if (!birthday) return null;
+      const birth = new Date(birthday);
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+      return age;
+    }
+
+    function toProperCase(str) {
+      if (!str) return '';
+      return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function formatStudentName(student) {
+      const parts = [];
+      if (student.lastname) parts.push(toProperCase(student.lastname) + ',');
+      if (student.firstname) parts.push(toProperCase(student.firstname));
+      if (student.middlename) parts.push(toProperCase(student.middlename));
+      // extension removed per user request
+      return parts.join(' ');
+    }
+
+    // ═══════════════════════════════════════════
+    // COMPARISONS MODULE
+    // ═══════════════════════════════════════════
+    async function recordVote(winnerId, loserId) {
+      const { data: { session } } = await db.auth.getSession();
+      const { error } = await db.from('comparisons').insert({
+        winner_id: winnerId,
+        loser_id: loserId,
+        voted_by: session?.user?.id || null
+      });
+      if (error) throw error;
+    }
+
+    async function getRankings(limit = 50) {
+      const { data: comparisons, error } = await db.from('comparisons').select('winner_id, loser_id');
+      if (error) throw error;
+
+      const stats = {};
+      for (const c of comparisons) {
+        if (!stats[c.winner_id]) stats[c.winner_id] = { wins: 0, losses: 0, total: 0 };
+        stats[c.winner_id].wins++; stats[c.winner_id].total++;
+        if (!stats[c.loser_id]) stats[c.loser_id] = { wins: 0, losses: 0, total: 0 };
+        stats[c.loser_id].losses++; stats[c.loser_id].total++;
+      }
+
+      const rankings = Object.entries(stats)
+        .map(([id, s]) => ({ student_id: id, wins: s.wins, losses: s.losses, total: s.total, winRate: s.total > 0 ? ((s.wins / s.total) * 100).toFixed(1) : '0.0' }))
+        .sort((a, b) => parseFloat(b.winRate) - parseFloat(a.winRate) || b.total - a.total)
+        .slice(0, limit);
+
+      const studentIds = rankings.map(r => r.student_id);
+      if (studentIds.length === 0) return [];
+
+      const { data: students } = await db.from('students').select('*').in('id', studentIds);
+      const studentMap = {};
+      for (const s of (students || [])) studentMap[s.id] = s;
+
+      for (const r of rankings) {
+        const s = studentMap[r.student_id];
+        if (s) {
+          r.student = s;
+          r.student._photoUrl = await getStudentPhotoUrl(s);
+          r.student._fullName = formatStudentName(s);
+          r.student._age = getStudentAge(s.birthday);
+        }
+      }
+      return rankings;
+    }
+
+    async function getDashboardStats() {
+      const { count: totalComparisons } = await db.from('comparisons').select('*', { count: 'exact', head: true });
+      const { count: totalStudents } = await db.from('students').select('*', { count: 'exact', head: true });
+      return { totalComparisons: totalComparisons || 0, totalStudents: totalStudents || 0 };
+    }
+
+    // ═══════════════════════════════════════════
+    // APP ROUTER & VIEWS
+    // ═══════════════════════════════════════════
+    let currentView = null;
+    let currentUserData = null;
+
+    function initRouter() {
+      window.addEventListener('hashchange', handleRoute);
+      handleRoute();
+    }
+
+    async function handleRoute() {
+      const hash = window.location.hash || '#login';
+      document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+
+      if (hash === '#login') {
+        showView('login-view');
+        initLoginView();
+      } else if (hash === '#compare') {
+        const user = await requireAuth();
+        if (!user) return;
+        currentUserData = user;
+        showView('compare-view');
+        await initCompareView();
+      } else if (hash === '#dashboard') {
+        const user = await requireAuth();
+        if (!user) return;
+        currentUserData = user;
+        showView('dashboard-view');
+        await initDashboardView();
+      } else {
+        window.location.hash = '#login';
+      }
+    }
+
+    function showView(viewId) {
+      currentView = viewId;
+      document.getElementById(viewId)?.classList.remove('hidden');
+    }
+
+    // ── Login View ──
+    function initLoginView() {
+      const form = document.getElementById('login-form');
+      const errorEl = document.getElementById('login-error');
+      const submitBtn = document.getElementById('login-submit');
+
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        errorEl.textContent = '';
+        errorEl.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="inline-block animate-spin mr-2">⟳</span> Signing in...';
+
+        try {
+          await loginWithEmail(
+            document.getElementById('login-email').value,
+            document.getElementById('login-password').value
+          );
+          window.location.hash = '#compare';
+        } catch (err) {
+          errorEl.textContent = err.message || 'Login failed.';
+          errorEl.classList.remove('hidden');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Login</span><span class="material-symbols-outlined text-sm">arrow_forward</span>';
+        }
+      };
+    }
+
+    // ── Compare View ──
+    let _currentPair = [];
+
+    let _keyHandler = null;
+
+    async function initCompareView() {
+      await loadNewPair();
+      document.getElementById('skip-btn').onclick = () => loadNewPair();
+      document.getElementById('rankings-link').onclick = () => { window.location.hash = '#dashboard'; };
+
+      // Keyboard shortcuts: ← left, → right, ↓ skip
+      if (_keyHandler) document.removeEventListener('keydown', _keyHandler);
+      _keyHandler = (e) => {
+        if (currentView !== 'compare-view' || _currentPair.length < 2) return;
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          document.getElementById('student-1').click();
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          document.getElementById('student-2').click();
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          loadNewPair();
+        }
+      };
+      document.addEventListener('keydown', _keyHandler);
+    }
+
+    async function loadNewPair() {
+      const container = document.getElementById('compare-cards');
+      const loading = document.getElementById('compare-loading');
+      container.classList.add('opacity-0', 'scale-95');
+      loading.classList.remove('hidden');
+
+      try {
+        _currentPair = await getTwoRandomStudents();
+        renderCompareCards(_currentPair);
+      } catch (err) {
+        console.error('Error loading students:', err);
+        container.innerHTML = '<p class="text-center text-red-400 py-20">Failed to load students. Please try again.</p>';
+      } finally {
+        loading.classList.add('hidden');
+        setTimeout(() => container.classList.remove('opacity-0', 'scale-95'), 50);
+      }
+    }
+
+    function renderCompareCards(students) {
+      renderStudentCard('student-1', students[0], students[1]);
+      renderStudentCard('student-2', students[1], students[0]);
+    }
+
+    function renderStudentCard(elementId, student, opponent) {
+      const card = document.getElementById(elementId);
+      const photoEl = card.querySelector('.student-photo');
+      const nameEl = card.querySelector('.student-name');
+      const bioEl = card.querySelector('.student-bio');
+      const fbLink = card.querySelector('.student-fb');
+
+      if (student._photoUrl) {
+        photoEl.style.backgroundImage = `url("${student._photoUrl}")`;
+      } else {
+        photoEl.style.backgroundImage = 'none';
+        photoEl.style.backgroundColor = '#3f1219';
+      }
+
+      const ageStr = student._age ? `, ${student._age}` : '';
+      nameEl.textContent = `${student._fullName}${ageStr}`;
+      // Show location info (barangay, lgu)
+      const locParts = [];
+      if (student.barangay) locParts.push(toProperCase(student.barangay));
+      if (student.lgu) locParts.push(toProperCase(student.lgu));
+      bioEl.textContent = locParts.length > 0 ? locParts.join(', ') : '';
+
+      if (student.facebook_profile_url) {
+        fbLink.href = student.facebook_profile_url;
+        fbLink.classList.remove('hidden');
+        fbLink.onclick = (e) => e.stopPropagation();
+      } else {
+        fbLink.classList.add('hidden');
+      }
+
+      card.onclick = async () => {
+        card.classList.add('ring-4', 'ring-primary', 'scale-105');
+        try { await recordVote(student.id, opponent.id); } catch (err) { console.error('Vote error:', err); }
+        setTimeout(() => {
+          card.classList.remove('ring-4', 'ring-primary', 'scale-105');
+          loadNewPair();
+        }, 400);
+      };
+    }
+
+    // ── Dashboard View ──
+    async function initDashboardView() {
+      const dashLoading = document.getElementById('dash-loading');
+      dashLoading.classList.remove('hidden');
+
+      if (currentUserData) {
+        document.getElementById('admin-email').textContent = currentUserData.adminUser.email || 'Admin';
+        document.getElementById('admin-role').textContent = currentUserData.adminUser.role || 'admin';
+        const mobileEmail = document.getElementById('admin-email-mobile');
+        if (mobileEmail) mobileEmail.textContent = currentUserData.adminUser.email || 'Admin';
+      }
+
+      document.getElementById('nav-overview').onclick = () => { window.location.hash = '#dashboard'; };
+      document.getElementById('nav-match').onclick = () => { window.location.hash = '#compare'; };
+      document.getElementById('nav-logout').onclick = () => logout();
+
+      try {
+        const stats = await getDashboardStats();
+        document.getElementById('stat-total-comparisons').textContent = stats.totalComparisons.toLocaleString();
+        document.getElementById('stat-total-students').textContent = stats.totalStudents.toLocaleString();
+
+        const rankings = await getRankings(20);
+        renderPodium(rankings.slice(0, 3));
+        renderRankingsTable(rankings);
+      } catch (err) {
+        console.error('Dashboard error:', err);
+      } finally {
+        dashLoading.classList.add('hidden');
+      }
+    }
+
+    function renderPodium(top3) {
+      const positions = ['podium-1', 'podium-2', 'podium-3'];
+      const orderMap = [1, 0, 2]; // 2nd, 1st, 3rd
+
+      for (let i = 0; i < 3; i++) {
+        const idx = orderMap[i];
+        const el = document.getElementById(positions[i]);
+        if (!el) continue;
+
+        if (idx < top3.length) {
+          const r = top3[idx];
+          el.querySelector('.podium-name').textContent = r.student?._fullName || 'Unknown';
+          el.querySelector('.podium-winrate').textContent = `${r.winRate}% Win Rate`;
+          el.querySelector('.podium-total').textContent = r.total.toLocaleString();
+          const photoEl = el.querySelector('.podium-photo');
+          if (r.student?._photoUrl) photoEl.style.backgroundImage = `url("${r.student._photoUrl}")`;
+        } else {
+          el.querySelector('.podium-name').textContent = 'No data';
+          el.querySelector('.podium-winrate').textContent = '-';
+          el.querySelector('.podium-total').textContent = '0';
+        }
+      }
+    }
+
+    function renderRankingsTable(rankings) {
+      const tbody = document.getElementById('rankings-tbody');
+      tbody.innerHTML = '';
+
+      if (rankings.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">No ranking data yet. Start comparing students!</td></tr>';
+        document.getElementById('rankings-count').textContent = '0 entries';
+        return;
+      }
+
+      rankings.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors';
+        const photoUrl = r.student?._photoUrl || '';
+        const photoStyle = photoUrl ? `background-image: url('${photoUrl}')` : 'background-color: #3f1219';
+
+        tr.innerHTML = `
+      <td class="px-6 py-4 font-bold text-slate-900 dark:text-slate-100">#${idx + 1}</td>
+      <td class="px-6 py-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-cover bg-center shrink-0" style="${photoStyle}"></div>
+          <span class="font-bold text-slate-900 dark:text-slate-100">${r.student?._fullName || 'Unknown'}</span>
+        </div>
+      </td>
+      <td class="px-6 py-4 font-medium text-green-500">${r.winRate}%</td>
+      <td class="px-6 py-4 font-medium">${r.total.toLocaleString()}</td>
+      <td class="px-6 py-4 font-medium">${r.wins.toLocaleString()}</td>
+      <td class="px-6 py-4">
+        ${r.student?.facebook_profile_url ? `<a href="${r.student.facebook_profile_url}" target="_blank" class="text-blue-400 hover:text-blue-300"><span class="material-symbols-outlined text-[20px]">open_in_new</span></a>` : '<span class="text-slate-500">-</span>'}
+      </td>
+    `;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('rankings-count').textContent = `Showing ${rankings.length} entries`;
+    }
+
+    // ── Password Toggle ──
+    function togglePasswordVisibility() {
+      const input = document.getElementById('login-password');
+      const icon = document.getElementById('password-toggle-icon');
+      input.type = input.type === 'password' ? 'text' : 'password';
+      icon.textContent = input.type === 'password' ? 'visibility' : 'visibility_off';
+    }
+
+    // ── Init ──
+    document.addEventListener('DOMContentLoaded', initRouter);
+  </script>
+
+</body>
+
+</html>
