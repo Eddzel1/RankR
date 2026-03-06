@@ -49,3 +49,32 @@ END $$;
 -- 5. Create index for faster ranking queries
 CREATE INDEX IF NOT EXISTS idx_comparisons_winner ON public.comparisons(winner_id);
 CREATE INDEX IF NOT EXISTS idx_comparisons_loser ON public.comparisons(loser_id);
+
+-- 6. Create the student_bookmarks table
+CREATE TABLE IF NOT EXISTS public.student_bookmarks (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  student_id uuid REFERENCES public.students(id) NOT NULL,
+  user_id uuid REFERENCES auth.users(id) NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  UNIQUE(student_id, user_id)
+);
+
+ALTER TABLE public.student_bookmarks ENABLE ROW LEVEL SECURITY;
+
+-- 7. RLS Policies for student_bookmarks
+CREATE POLICY "Users can read own bookmarks"
+  ON public.student_bookmarks FOR SELECT
+  TO authenticated
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own bookmarks"
+  ON public.student_bookmarks FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own bookmarks"
+  ON public.student_bookmarks FOR DELETE
+  TO authenticated
+  USING (auth.uid() = user_id);
+
+CREATE INDEX IF NOT EXISTS idx_bookmarks_user ON public.student_bookmarks(user_id);

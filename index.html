@@ -215,12 +215,16 @@
         <a class="text-sm font-medium hover:text-primary transition-colors cursor-pointer"
           onclick="window.location.hash='#compare'">Match</a>
         <a class="text-sm font-medium hover:text-primary transition-colors cursor-pointer"
+          onclick="window.location.hash='#bookmarks'">Bookmarks</a>
+        <a class="text-sm font-medium hover:text-primary transition-colors cursor-pointer"
           onclick="window.location.hash='#dashboard'">Rankings</a>
         <a class="text-sm font-medium hover:text-primary transition-colors cursor-pointer" onclick="logout()">Logout</a>
       </nav>
       <!-- Mobile nav -->
       <nav class="flex md:hidden gap-4 items-center">
-        <a class="text-primary" onclick="window.location.hash='#dashboard'"><span
+        <a class="text-slate-400 hover:text-primary" onclick="window.location.hash='#bookmarks'"><span
+            class="material-symbols-outlined text-[22px]">bookmark</span></a>
+        <a class="text-slate-400 hover:text-primary" onclick="window.location.hash='#dashboard'"><span
             class="material-symbols-outlined text-[22px]">leaderboard</span></a>
         <a class="text-slate-400 hover:text-primary" onclick="logout()"><span
             class="material-symbols-outlined text-[22px]">logout</span></a>
@@ -248,6 +252,11 @@
           class="relative group cursor-pointer w-full max-w-[45%] sm:max-w-sm aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden shadow-xl card-hover border-2 sm:border-4 border-transparent">
           <div class="student-photo absolute inset-0 bg-cover bg-center" style="background-color: #3f1219"></div>
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <button
+            class="student-bookmark absolute top-2 right-2 sm:top-4 sm:right-4 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-primary/60 transition-all"
+            title="Bookmark">
+            <span class="material-symbols-outlined text-lg sm:text-xl">bookmark</span>
+          </button>
           <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-6 text-white">
             <h3 class="student-name text-sm sm:text-lg md:text-2xl font-bold leading-tight">Loading...</h3>
             <p class="student-bio text-[10px] sm:text-sm text-slate-200 mt-1 sm:mt-2 line-clamp-1 sm:line-clamp-2"></p>
@@ -269,6 +278,11 @@
           class="relative group cursor-pointer w-full max-w-[45%] sm:max-w-sm aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden shadow-xl card-hover border-2 sm:border-4 border-transparent">
           <div class="student-photo absolute inset-0 bg-cover bg-center" style="background-color: #3f1219"></div>
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <button
+            class="student-bookmark absolute top-2 right-2 sm:top-4 sm:right-4 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-primary/60 transition-all"
+            title="Bookmark">
+            <span class="material-symbols-outlined text-lg sm:text-xl">bookmark</span>
+          </button>
           <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-6 text-white">
             <h3 class="student-name text-sm sm:text-lg md:text-2xl font-bold leading-tight">Loading...</h3>
             <p class="student-bio text-[10px] sm:text-sm text-slate-200 mt-1 sm:mt-2 line-clamp-1 sm:line-clamp-2"></p>
@@ -527,6 +541,64 @@
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════
+     BOOKMARKS VIEW
+     ═══════════════════════════════════════════ -->
+  <div id="bookmarks-view" class="view hidden min-h-screen flex flex-col">
+    <header
+      class="flex items-center justify-between whitespace-nowrap border-b border-primary/20 px-4 sm:px-10 py-3 sm:py-4">
+      <div class="flex items-center gap-3 sm:gap-4 text-primary">
+        <div class="size-5 sm:size-6">
+          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor"
+              fill-rule="evenodd"></path>
+          </svg>
+        </div>
+        <h2 class="text-lg sm:text-xl font-bold tracking-tight">Bookmarks</h2>
+      </div>
+      <nav class="hidden md:flex flex-1 justify-end gap-8 items-center">
+        <a class="text-sm font-medium hover:text-primary transition-colors cursor-pointer"
+          onclick="window.location.hash='#compare'">Match</a>
+        <a class="text-sm font-medium hover:text-primary transition-colors cursor-pointer"
+          onclick="window.location.hash='#dashboard'">Rankings</a>
+        <a class="text-sm font-medium hover:text-primary transition-colors cursor-pointer" onclick="logout()">Logout</a>
+      </nav>
+      <nav class="flex md:hidden gap-4 items-center">
+        <a class="text-slate-400 hover:text-primary" onclick="window.location.hash='#compare'"><span
+            class="material-symbols-outlined text-[22px]">favorite</span></a>
+        <a class="text-slate-400 hover:text-primary" onclick="window.location.hash='#dashboard'"><span
+            class="material-symbols-outlined text-[22px]">leaderboard</span></a>
+        <a class="text-slate-400 hover:text-primary" onclick="logout()"><span
+            class="material-symbols-outlined text-[22px]">logout</span></a>
+      </nav>
+    </header>
+
+    <main class="flex-1 p-4 sm:p-8 w-full max-w-7xl mx-auto">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-xl sm:text-3xl font-black text-slate-900 dark:text-white">Your Bookmarks</h1>
+          <p id="bookmarks-count" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Loading...</p>
+        </div>
+      </div>
+
+      <div id="bookmarks-loading" class="hidden flex items-center justify-center py-20">
+        <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+      </div>
+
+      <div id="bookmarks-empty" class="hidden flex flex-col items-center justify-center py-20 text-center">
+        <span class="material-symbols-outlined text-6xl text-slate-600 mb-4">bookmark</span>
+        <h3 class="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">No bookmarks yet</h3>
+        <p class="text-slate-500 dark:text-slate-400 mb-6">Tap the bookmark icon on student cards to save them here.</p>
+        <a onclick="window.location.hash='#compare'"
+          class="px-6 py-2.5 bg-primary text-white rounded-full font-bold cursor-pointer hover:bg-primary/90 transition-colors">Start
+          Matching</a>
+      </div>
+
+      <div id="bookmarks-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+      </div>
+    </main>
+  </div>
+
   <!-- All app code in one inline script to avoid scope issues -->
   <script>
     // ═══════════════════════════════════════════
@@ -658,6 +730,83 @@
     }
 
     // ═══════════════════════════════════════════
+    // BOOKMARKS MODULE
+    // ═══════════════════════════════════════════
+    async function toggleBookmark(studentId) {
+      const { data: { session } } = await db.auth.getSession();
+      if (!session) return false;
+
+      // Check if it exists globally
+      const { data: existing } = await db.from('student_bookmarks')
+        .select('id')
+        .eq('student_id', studentId)
+        .maybeSingle();
+
+      if (existing) {
+        // Delete globally
+        await db.from('student_bookmarks').delete().eq('student_id', studentId);
+        return false; // removed
+      } else {
+        // Insert using the internal adminUser ID, not the auth.uid()
+        const adminUserId = currentUserData?.adminUser?.id;
+        if (!adminUserId) return false;
+
+        const { error } = await db.from('student_bookmarks').insert({ student_id: studentId, admin_user_id: adminUserId });
+        if (error && error.code === '23505') return true; // It was added by someone else at the exact same time
+        if (error) throw error;
+        return true; // added
+      }
+    }
+
+    async function isBookmarked(studentId) {
+      const { data: { session } } = await db.auth.getSession();
+      if (!session) return false;
+      const { data } = await db.from('student_bookmarks')
+        .select('id')
+        .eq('student_id', studentId)
+        .maybeSingle();
+      return !!data;
+    }
+
+    async function getBookmarkedStudents() {
+      // Show all bookmarks from all users
+      const { data: bookmarks, error } = await db.from('student_bookmarks')
+        .select('student_id, created_at')
+        .order('created_at', { ascending: false });
+      if (error || !bookmarks || bookmarks.length === 0) return [];
+
+      // Deduplicate by student_id (keep most recent)
+      const seen = new Set();
+      const uniqueBookmarks = bookmarks.filter(b => {
+        if (seen.has(b.student_id)) return false;
+        seen.add(b.student_id);
+        return true;
+      });
+
+      const ids = uniqueBookmarks.map(b => b.student_id);
+      const { data: students } = await db.from('students').select('*').in('id', ids);
+      if (!students) return [];
+
+      for (const s of students) {
+        s._photoUrl = await getStudentPhotoUrl(s);
+        s._fullName = formatStudentName(s);
+        s._age = getStudentAge(s.birthday);
+      }
+      // Sort by bookmark order (most recent first)
+      const idOrder = {};
+      uniqueBookmarks.forEach((b, i) => idOrder[b.student_id] = i);
+      students.sort((a, b) => (idOrder[a.id] ?? 999) - (idOrder[b.id] ?? 999));
+      return students;
+    }
+
+    async function removeBookmark(studentId) {
+      const { data: { session } } = await db.auth.getSession();
+      if (!session) return;
+      await db.from('student_bookmarks').delete()
+        .eq('student_id', studentId);
+    }
+
+    // ═══════════════════════════════════════════
     // COMPARISONS MODULE
     // ═══════════════════════════════════════════
     async function recordVote(winnerId, loserId) {
@@ -742,6 +891,12 @@
         currentUserData = user;
         showView('dashboard-view');
         await initDashboardView();
+      } else if (hash === '#bookmarks') {
+        const user = await requireAuth();
+        if (!user) return;
+        currentUserData = user;
+        showView('bookmarks-view');
+        await initBookmarksView();
       } else {
         window.location.hash = '#login';
       }
@@ -862,6 +1017,39 @@
         fbLink.classList.add('hidden');
       }
 
+      // Bookmark button
+      const bookmarkBtn = card.querySelector('.student-bookmark');
+      if (bookmarkBtn) {
+        isBookmarked(student.id).then(bookmarked => {
+          const icon = bookmarkBtn.querySelector('.material-symbols-outlined');
+          if (bookmarked) {
+            bookmarkBtn.classList.add('bg-primary/80');
+            bookmarkBtn.classList.remove('bg-black/40');
+            icon.textContent = 'bookmark_added';
+          } else {
+            bookmarkBtn.classList.remove('bg-primary/80');
+            bookmarkBtn.classList.add('bg-black/40');
+            icon.textContent = 'bookmark';
+          }
+        });
+        bookmarkBtn.onclick = async (e) => {
+          e.stopPropagation();
+          const icon = bookmarkBtn.querySelector('.material-symbols-outlined');
+          try {
+            const added = await toggleBookmark(student.id);
+            if (added) {
+              bookmarkBtn.classList.add('bg-primary/80');
+              bookmarkBtn.classList.remove('bg-black/40');
+              icon.textContent = 'bookmark_added';
+            } else {
+              bookmarkBtn.classList.remove('bg-primary/80');
+              bookmarkBtn.classList.add('bg-black/40');
+              icon.textContent = 'bookmark';
+            }
+          } catch (err) { console.error('Bookmark error:', err); }
+        };
+      }
+
       card.onclick = async () => {
         card.classList.add('ring-4', 'ring-primary', 'scale-105');
         try { await recordVote(student.id, opponent.id); } catch (err) { console.error('Vote error:', err); }
@@ -961,6 +1149,75 @@
         tbody.appendChild(tr);
       });
       document.getElementById('rankings-count').textContent = `Showing ${rankings.length} entries`;
+    }
+
+    // ── Bookmarks View ──
+    async function initBookmarksView() {
+      const loading = document.getElementById('bookmarks-loading');
+      const empty = document.getElementById('bookmarks-empty');
+      const grid = document.getElementById('bookmarks-grid');
+      const countEl = document.getElementById('bookmarks-count');
+
+      loading.classList.remove('hidden');
+      empty.classList.add('hidden');
+      grid.innerHTML = '';
+
+      try {
+        const students = await getBookmarkedStudents();
+
+        if (students.length === 0) {
+          empty.classList.remove('hidden');
+          countEl.textContent = '0 bookmarked students';
+        } else {
+          countEl.textContent = `${students.length} bookmarked student${students.length !== 1 ? 's' : ''}`;
+          renderBookmarksGrid(students, grid);
+        }
+      } catch (err) {
+        console.error('Bookmarks error:', err);
+        countEl.textContent = 'Error loading bookmarks';
+      } finally {
+        loading.classList.add('hidden');
+      }
+    }
+
+    function renderBookmarksGrid(students, grid) {
+      students.forEach(student => {
+        const card = document.createElement('div');
+        card.className = 'relative group rounded-xl sm:rounded-2xl overflow-hidden shadow-lg aspect-[3/4] cursor-pointer';
+        const photoStyle = student._photoUrl ? `background-image: url('${student._photoUrl}')` : 'background-color: #3f1219';
+        const ageStr = student._age ? `, ${student._age}` : '';
+        const locParts = [];
+        if (student.barangay) locParts.push(toProperCase(student.barangay));
+        if (student.lgu) locParts.push(toProperCase(student.lgu));
+        const locStr = locParts.length > 0 ? locParts.join(', ') : '';
+
+        card.innerHTML = `
+          <div class="absolute inset-0 bg-cover bg-center" style="${photoStyle}"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <button class="bookmark-remove absolute top-2 right-2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary/80 flex items-center justify-center text-white hover:bg-red-600 transition-all" title="Remove bookmark">
+            <span class="material-symbols-outlined text-sm sm:text-base">bookmark_remove</span>
+          </button>
+          <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4 text-white">
+            <h3 class="text-xs sm:text-sm md:text-base font-bold leading-tight">${student._fullName}${ageStr}</h3>
+            ${locStr ? `<p class="text-[9px] sm:text-xs text-slate-300 mt-0.5">${locStr}</p>` : ''}
+            ${student.facebook_profile_url ? `<a href="${student.facebook_profile_url}" target="_blank" class="mt-1 inline-flex items-center gap-0.5 text-[9px] sm:text-[10px] text-blue-300 hover:text-blue-200"><span class="material-symbols-outlined text-[10px]">link</span> FB</a>` : ''}
+          </div>
+        `;
+
+        const removeBtn = card.querySelector('.bookmark-remove');
+        removeBtn.onclick = async (e) => {
+          e.stopPropagation();
+          card.style.opacity = '0.5';
+          await removeBookmark(student.id);
+          card.remove();
+          // Update count
+          const remaining = grid.querySelectorAll(':scope > div').length;
+          document.getElementById('bookmarks-count').textContent = `${remaining} bookmarked student${remaining !== 1 ? 's' : ''}`;
+          if (remaining === 0) document.getElementById('bookmarks-empty').classList.remove('hidden');
+        };
+
+        grid.appendChild(card);
+      });
     }
 
     // ── Password Toggle ──
